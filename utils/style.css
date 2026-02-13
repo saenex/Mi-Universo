@@ -95,7 +95,7 @@ body {
   background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
 }
 .loader-content { display: flex; flex-direction: column; align-items: center; }
-.loading-gif { width: 150px; transform: scale(0); opacity: 0; }
+.loading-gif { width: 300px; transform: scale(0); opacity: 0; }
 .loading-gif.active { animation: loadingAppear 0.8s forwards; }
 .loading-gif.finish { animation: loadingDisappear 0.4s forwards; }
 #loadingText {
