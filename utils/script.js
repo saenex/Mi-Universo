@@ -6,7 +6,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 // 13 de Marzo de 2024 a las 8:38 PM (20:38)
 const fechaInicio = new Date(2024, 2, 13, 20, 38, 0); 
 
-// --- FRASES PERSONALIZADAS ---
+// --- FRASES PERSONALIZADAS (TUS CAMBIOS) ---
 const frasesAmor = [
     // --- GAMER SUTIL ---
     "Mi Duo favorito", "La mas pro", "Mi MVP", 
@@ -29,6 +29,8 @@ const frasesAmor = [
     "Mi medicina", "Mi refugio", "Eres arte", "Mi felicidad"
 ];
 
+let controls; // Variable global para controlar el zoom/giro
+
 document.addEventListener('DOMContentLoaded', () => {
     
     // Elementos DOM
@@ -39,10 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainSite = document.getElementById('main-site');
     const bgMusic = document.getElementById('backgroundMusic');
     const beeGif = document.getElementById('beeGif');
-    
-    // NUEVO: Botón de flecha para bajar
     const scrollArrow = document.getElementById('scrollArrow');
     const universeSection = document.getElementById('universeSection');
+    const toggleBtn = document.getElementById('toggleUniverseBtn');
 
     // --- ENTRADA ---
     if(enterButton) {
@@ -57,23 +58,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 bgMusic.play().catch(e => console.log("Audio autoplay prevenido"));
             }
 
-            setTimeout(() => {
-                loadingGif.classList.remove('active');
-                loadingGif.classList.add('finish');
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    mainSite.classList.add('active'); 
-                    initUniverse();
-                }, 500);
-            }, 2000);
+            // Iniciamos la carga real de texturas aquí
+            initUniverse(loadingScreen, mainSite, loadingGif);
         });
     }
 
-    // --- LÓGICA DE LA FLECHA (NUEVO) ---
     if(scrollArrow && universeSection) {
         scrollArrow.addEventListener('click', () => {
-            // Esto hace que baje suavemente hasta el universo
             universeSection.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    // BOTÓN MÓVIL: BLOQUEAR/DESBLOQUEAR GIRO
+    if(toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            if(controls) {
+                controls.enabled = !controls.enabled; // Alternar estado
+                if(controls.enabled) {
+                    toggleBtn.innerHTML = '<i class="bi bi-pause-circle"></i> Desactivar Giro';
+                    toggleBtn.classList.add('active');
+                } else {
+                    toggleBtn.innerHTML = '<i class="bi bi-hand-index-thumb"></i> Activar Giro';
+                    toggleBtn.classList.remove('active');
+                }
+            }
         });
     }
 
@@ -82,11 +90,27 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-//    CONFIGURACIÓN DEL UNIVERSO 3D
+//    CONFIGURACIÓN DEL UNIVERSO 3D (MEJORADA)
 // ==========================================
-function initUniverse() {
+function initUniverse(loadingScreen, mainSite, loadingGif) {
     const container = document.getElementById('universe-container');
     if (!container) return;
+
+    // --- LOADING MANAGER (SOLUCIÓN A PLANETAS QUE NO CARGAN) ---
+    const manager = new THREE.LoadingManager();
+    
+    manager.onLoad = function () {
+        // Solo cuando TODO cargue, quitamos la pantalla
+        console.log('Carga completada');
+        loadingGif.classList.remove('active');
+        loadingGif.classList.add('finish');
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            mainSite.classList.add('active'); 
+        }, 500);
+    };
+
+    const textureLoader = new THREE.TextureLoader(manager);
 
     // 1. ESCENA
     const scene = new THREE.Scene();
@@ -110,21 +134,22 @@ function initUniverse() {
     labelRenderer.domElement.style.pointerEvents = 'none';
     container.appendChild(labelRenderer.domElement);
 
-    // 3. CONTROLES (SIN BLOQUEO DE ZOOM, COMO PEDISTE)
-    const controls = new OrbitControls(camera, renderer.domElement);
+    // 3. CONTROLES (MODIFICADO PARA MÓVIL)
+    controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.minDistance = 10;
     controls.maxDistance = 100;
+    
+    // Por defecto, desactivamos los controles para evitar que atrape el scroll
+    // El usuario debe activarlos con el botón
+    controls.enabled = false; 
 
     // 4. ILUMINACIÓN
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.5); 
     scene.add(ambientLight);
     const pointLight = new THREE.PointLight(0xffffff, 3, 500);
     scene.add(pointLight);
-
-    // 5. CARGADOR DE TEXTURAS
-    const textureLoader = new THREE.TextureLoader();
 
     // --- EL SOL ---
     const sunGeo = new THREE.SphereGeometry(5, 64, 64);
@@ -133,7 +158,6 @@ function initUniverse() {
     const sun = new THREE.Mesh(sunGeo, sunMat);
     scene.add(sun);
 
-    // Etiqueta Sol
     const sunDiv = document.createElement('div');
     sunDiv.className = 'planet-label sun-label';
     sunDiv.textContent = 'MI JULY'; 
@@ -186,33 +210,23 @@ function initUniverse() {
     for (let i = 0; i < totalPhrases; i++) {
         const angle = i * step;
         const textContent = frasesAmor[i % frasesAmor.length]; 
-
         const div = document.createElement('div');
         div.className = 'outer-ring-label';
         div.textContent = textContent;
-        
         const label = new CSS2DObject(div);
-        label.position.set(
-            Math.cos(angle) * ringRadius, 
-            (Math.random() - 0.5) * 8, 
-            Math.sin(angle) * ringRadius
-        );
+        label.position.set(Math.cos(angle) * ringRadius, (Math.random() - 0.5) * 8, Math.sin(angle) * ringRadius);
         outerRingPivot.add(label);
     }
 
-    // --- ESTRELLAS ---
     const starGeo = new THREE.BufferGeometry();
     const starCount = 4000;
     const posArray = new Float32Array(starCount * 3);
-    for(let i=0; i<starCount*3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 800;
-    }
+    for(let i=0; i<starCount*3; i++) posArray[i] = (Math.random() - 0.5) * 800;
     starGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
     const starMat = new THREE.PointsMaterial({size: 0.6, color: 0xffffff, transparent: true, opacity: 0.8});
     const starMesh = new THREE.Points(starGeo, starMat);
     scene.add(starMesh);
 
-    // 6. ANIMACIÓN
     function animate() {
         requestAnimationFrame(animate);
         planets.forEach(p => {
@@ -242,44 +256,26 @@ function initCounters() {
     function actualizar() {
         const ahora = new Date();
         const diferencia = ahora - fechaInicio;
-        
         const segs = Math.floor(diferencia / 1000);
         const mins = Math.floor(segs / 60);
         const horas = Math.floor(mins / 60);
         const dias = Math.floor(horas / 24);
-
         setText('totalDias', dias);
         setText('horas', horas % 24);
         setText('minutos', mins % 60);
         setText('segundos', segs % 60);
-
         let aniosCalc = ahora.getFullYear() - fechaInicio.getFullYear();
         let mesesCalc = ahora.getMonth() - fechaInicio.getMonth();
         let diasCalc = ahora.getDate() - fechaInicio.getDate();
-        
-        if (ahora.getHours() < fechaInicio.getHours() || 
-           (ahora.getHours() === fechaInicio.getHours() && ahora.getMinutes() < fechaInicio.getMinutes())) {
-            diasCalc--;
-        }
-        if (diasCalc < 0) {
-            mesesCalc--;
-            const mesAnterior = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
-            diasCalc += mesAnterior.getDate();
-        }
-        if (mesesCalc < 0) {
-            aniosCalc--;
-            mesesCalc += 12;
-        }
-
+        if (ahora.getHours() < fechaInicio.getHours() || (ahora.getHours() === fechaInicio.getHours() && ahora.getMinutes() < fechaInicio.getMinutes())) { diasCalc--; }
+        if (diasCalc < 0) { mesesCalc--; diasCalc += new Date(ahora.getFullYear(), ahora.getMonth(), 0).getDate(); }
+        if (mesesCalc < 0) { aniosCalc--; mesesCalc += 12; }
         setText('anios2', aniosCalc);
         setText('meses2', mesesCalc);
         setText('diasSolo2', diasCalc);
         setText('horas2', horas % 24);
     }
-    function setText(id, val) {
-        const el = document.getElementById(id);
-        if(el) el.innerText = val < 10 ? '0'+val : val;
-    }
+    function setText(id, val) { const el = document.getElementById(id); if(el) el.innerText = val < 10 ? '0'+val : val; }
     setInterval(actualizar, 1000);
     actualizar();
 }
@@ -293,10 +289,7 @@ function initSlider() {
         slider.style.transform = `translateX(-${currentSlide * 50}%)`;
         dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
     }
-    dots.forEach((dot, i) => dot.addEventListener('click', () => {
-        currentSlide = i;
-        update();
-    }));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => { currentSlide = i; update(); }));
     let startX = 0;
     slider.parentElement.addEventListener('touchstart', e => startX = e.touches[0].clientX);
     slider.parentElement.addEventListener('touchend', e => {

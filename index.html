@@ -41,7 +41,10 @@
   </div>
 
   <div id="loadingScreen" class="loading-screen" style="display: none;">
-    <img src="img/MiniJuly.gif" alt="Cargando..." class="loading-gif">
+    <div class="loader-content">
+      <img src="img/MiniJuly.gif" alt="Cargando..." class="loading-gif">
+      <p id="loadingText">Cargando Planetas...</p>
+    </div>
   </div>
 
   <div id="main-site" class="hidden-site">
@@ -96,8 +99,12 @@
     <section class="section-universe" id="universeSection">
       <div id="universe-container"></div>
       
+      <button id="toggleUniverseBtn" class="universe-toggle-btn">
+        <i class="bi bi-hand-index-thumb"></i> Activar Giro
+      </button>
+
       <div class="universe-overlay">
-        <p>Sigue bajando para ver más <i class="bi bi-arrow-down"></i></p>
+        <p id="universeHelpText">Usa el botón para mover los planetas o sigue bajando <i class="bi bi-arrow-down"></i></p>
       </div>
     </section>
 
@@ -124,6 +131,19 @@
           Gracias por ser mi duo, mi amiga y mi persona favorita.
         </p>
         <p class="signature">Con cariño, Miguel.</p>
+      </div>
+
+      <div class="qr-section">
+        <p>Escanea nuestro mundo</p>
+        <div class="qr-container">
+            <img src="img/qr-love.png" alt="QR Code" class="qr-image">
+        </div>
+      </div>
+
+      <div class="floating-video">
+        <video autoplay loop muted playsinline>
+          <source src="img/video_detalle.mp4" type="video/mp4">
+        </video>
       </div>
 
     </section>
