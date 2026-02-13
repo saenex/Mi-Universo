@@ -6,7 +6,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 // 13 de Marzo de 2024 a las 8:38 PM (20:38)
 const fechaInicio = new Date(2024, 2, 13, 20, 38, 0); 
 
-// --- FRASES PERSONALIZADAS (TUS CAMBIOS) ---
+// --- FRASES PERSONALIZADAS ---
 const frasesAmor = [
     // --- GAMER SUTIL ---
     "Mi Duo favorito", "La mas pro", "Mi MVP", 
@@ -58,8 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 bgMusic.play().catch(e => console.log("Audio autoplay prevenido"));
             }
 
-            // Iniciamos la carga real de texturas aquí
-            initUniverse(loadingScreen, mainSite, loadingGif);
+            // Carga simple y rápida
+            setTimeout(() => {
+                loadingGif.classList.remove('active');
+                loadingGif.classList.add('finish');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    mainSite.classList.add('active'); 
+                    initUniverse(); // Iniciar universo sin esperas complejas
+                }, 500);
+            }, 2000); // Espera 2 segundos para efecto visual
         });
     }
 
@@ -90,27 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-//    CONFIGURACIÓN DEL UNIVERSO 3D (MEJORADA)
+//    CONFIGURACIÓN DEL UNIVERSO 3D
 // ==========================================
-function initUniverse(loadingScreen, mainSite, loadingGif) {
+function initUniverse() {
     const container = document.getElementById('universe-container');
     if (!container) return;
 
-    // --- LOADING MANAGER (SOLUCIÓN A PLANETAS QUE NO CARGAN) ---
-    const manager = new THREE.LoadingManager();
-    
-    manager.onLoad = function () {
-        // Solo cuando TODO cargue, quitamos la pantalla
-        console.log('Carga completada');
-        loadingGif.classList.remove('active');
-        loadingGif.classList.add('finish');
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-            mainSite.classList.add('active'); 
-        }, 500);
-    };
-
-    const textureLoader = new THREE.TextureLoader(manager);
+    const textureLoader = new THREE.TextureLoader();
 
     // 1. ESCENA
     const scene = new THREE.Scene();
@@ -142,7 +136,6 @@ function initUniverse(loadingScreen, mainSite, loadingGif) {
     controls.maxDistance = 100;
     
     // Por defecto, desactivamos los controles para evitar que atrape el scroll
-    // El usuario debe activarlos con el botón
     controls.enabled = false; 
 
     // 4. ILUMINACIÓN

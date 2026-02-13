@@ -49,7 +49,7 @@ body {
 .gif-button:hover { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--accent-elegant)); }
 .gif-button img { width: 100%; height: auto; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
 
-/* PANTALLA DE CARGA (Con texto) */
+/* PANTALLA DE CARGA (SIMPLE) */
 .loading-screen {
   position: fixed; inset: 0; z-index: 9998; display: flex; align-items: center; justify-content: center;
   background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
@@ -57,9 +57,7 @@ body {
 .loader-content { display: flex; flex-direction: column; align-items: center; }
 .loading-gif { width: 150px; transform: scale(0); opacity: 0; }
 .loading-gif.active { animation: loadingAppear 0.8s forwards; }
-#loadingText { margin-top: 10px; font-size: 1.2rem; color: var(--accent-elegant); animation: blink 1.5s infinite; }
 @keyframes loadingAppear { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-@keyframes blink { 50% { opacity: 0.5; } }
 .hidden-site { opacity: 0; transition: opacity 1.5s ease; }
 .hidden-site.active { opacity: 1; }
 
@@ -172,25 +170,7 @@ body {
 .floating-video:hover { transform: rotate(0deg) scale(1.05); opacity: 1; box-shadow: 0 0 20px rgba(238, 189, 159, 0.3); }
 .floating-video video { width: 100%; height: auto; display: block; }
 
-/* QR CODE DE CORAZÓN (ESTILOS NUEVOS) */
-.qr-section {
-  text-align: center; margin-top: 20px;
-  background: var(--bg-warm-dark); padding: 20px; border-radius: 20px;
-  border: 1px solid rgba(238, 189, 159, 0.2);
-}
-.qr-section p { font-size: 1.2rem; color: var(--accent-elegant); margin-bottom: 10px; }
-.qr-container {
-  width: 150px; height: 150px; display: inline-block;
-  background: white; padding: 5px;
-  /* Máscara de Corazón usando CSS */
-  clip-path: path("M75,150 C75,150 150,110 150,65 C150,25 120,5 95,5 C75,5 75,25 75,25 C75,25 75,5 55,5 C30,5 0,25 0,65 C0,110 75,150 75,150 Z");
-  transition: transform 0.3s ease;
-}
-.qr-container:hover { transform: scale(1.1); }
-.qr-image { width: 100%; height: 100%; object-fit: contain; }
-
 @media (max-width: 768px) {
   .welcome-text h1 { font-size: 18vw; }
   .floating-video { width: 120px; bottom: 20px; left: 10px; }
-  .qr-container { width: 120px; height: 120px; }
 }
