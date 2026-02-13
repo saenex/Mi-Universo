@@ -8,24 +8,34 @@
   --font-main: "Charm", cursive;
 }
 
+/* --- CORRECCIÓN DEFINITIVA DE BARRA (Reset Completo) --- */
 html {
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
+  width: 100%;
   height: 100%;
-  overflow-y: scroll;
+  /* !important fuerza a quitar la barra del navegador y el hueco */
+  overflow: hidden !important; 
+  margin: 0;
+  padding: 0;
 }
 
 body {
   font-family: var(--font-main);
+  background-color: #0a0505;
+  color: var(--text-light);
+  
+  /* Aquí vive el scroll ahora, pegado a la derecha */
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #0a0505;
-  overflow-x: hidden;
-  color: var(--text-light);
-  height: 100%;
+  overflow-y: auto !important; /* Scroll vertical activo */
+  overflow-x: hidden !important; /* Cero scroll horizontal */
+  
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
 }
 
-/* --- BARRA DE SCROLL --- */
+/* --- BARRA DE SCROLL LINDA --- */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #1a1010; }
 ::-webkit-scrollbar-thumb { 
@@ -53,54 +63,32 @@ body {
   color: var(--text-light); 
   display: flex; 
   flex-direction: column; 
-  align-items: center; /* Esto debería centrar, pero el margin ayuda */
+  align-items: center; 
   z-index: 1; 
   width: 100%;
 }
-
 .welcome-text h1 { 
   font-size: clamp(60px, 15vw, 130px); margin: 0; font-weight: bold; 
   color: var(--accent-elegant); 
   text-shadow: 0 0 25px rgba(238, 189, 159, 0.4), var(--text-shadow-warm);
 }
 .welcome-text p { font-size: clamp(20px, 5vw, 29px); margin-top: 20px; color: var(--text-light); text-shadow: var(--text-shadow-warm); }
-.click-hint { font-size: 14px !important; opacity: 0.8; margin-top: 5px !important; color: var(--accent-elegant) !important; }
+.click-hint { 
+  font-size: 14px !important; opacity: 0.9; margin-top: 0px !important; color: var(--accent-elegant) !important; 
+  position: relative; z-index: 10; display: block; 
+}
 
-/* --- CORRECCIÓN BOTÓN Y TEXTO --- */
+/* --- CORRECCIÓN MUÑEQUITA CENTRADA --- */
 .gif-button { 
   margin-top: 2rem; 
-  margin-left: auto;  
-  margin-right: auto;
-  margin-bottom: 15px; /* Espacio extra debajo de la muñequita */
-  width: 150px; 
-  height: auto; /* IMPORTANTE: Altura automática para que no corte la imagen */
-  cursor: pointer; 
-  transition: transform 0.3s ease; 
-  align-self: center; 
-  display: block; 
+  margin-left: auto; margin-right: auto; margin-bottom: 15px; 
+  width: 150px; height: auto; 
+  cursor: pointer; transition: transform 0.3s ease; 
+  align-self: center; display: block; 
 }
+.gif-button:hover { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--accent-elegant)); }
+.gif-button img { width: 100%; height: auto; display: block; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
 
-.gif-button:hover { 
-  transform: scale(1.05); 
-  filter: drop-shadow(0 0 15px var(--accent-elegant)); 
-}
-
-.gif-button img { 
-  width: 100%; 
-  height: auto; 
-  display: block; /* Elimina espacios fantasma debajo de la imagen */
-  filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); 
-}
-
-.click-hint { 
-  font-size: 14px !important; 
-  opacity: 0.9; 
-  margin-top: 0px !important; /* El margen ya lo da el botón de arriba */
-  color: var(--accent-elegant) !important; 
-  position: relative; 
-  z-index: 10; 
-  display: block; 
-}
 /* --- PANTALLA DE CARGA --- */
 .loading-screen {
   position: fixed; inset: 0; z-index: 9998; display: flex; align-items: center; justify-content: center;
@@ -110,7 +98,16 @@ body {
 .loading-gif { width: 150px; transform: scale(0); opacity: 0; }
 .loading-gif.active { animation: loadingAppear 0.8s forwards; }
 .loading-gif.finish { animation: loadingDisappear 0.4s forwards; }
+#loadingText {
+  margin-top: 15px; font-size: 1.3rem; color: var(--accent-elegant); font-family: var(--font-main);
+  letter-spacing: 2px; animation: textPulse 1.5s infinite ease-in-out;
+}
+@keyframes loadingAppear { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes loadingDisappear { 100% { transform: scale(0); opacity: 0; } }
+@keyframes textPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
+.hidden-site { opacity: 0; transition: opacity 1.5s ease; }
+.hidden-site.active { opacity: 1; }
 /* Texto de carga parpadeante */
 #loadingText {
   margin-top: 15px;
