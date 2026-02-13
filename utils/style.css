@@ -247,3 +247,51 @@ body {
   .welcome-text h1 { font-size: 18vw; }
   .floating-video { width: 120px; bottom: 20px; left: 10px; }
 }
+/* --- CORRECCIÓN DE TAMAÑOS (Hacer todo más grande y legible) --- */
+
+/* 1. Aumentar textos de bienvenida */
+.welcome-text h1 {
+  /* Hacemos el título mucho más grande */
+  font-size: clamp(80px, 18vw, 150px) !important; 
+}
+.welcome-text p {
+  font-size: clamp(24px, 6vw, 32px) !important;
+  font-weight: 500;
+}
+
+/* 2. Aumentar textos de la sección de flores (Mensajes y contadores) */
+.love-message h1 {
+  font-size: 3rem !important; /* Más grande */
+}
+.love-message p {
+  font-size: 1.4rem !important; /* Texto de párrafo más legible */
+}
+
+.contador-titulo {
+  font-size: 1.6rem !important;
+  letter-spacing: 2px;
+}
+.contador-grid span {
+  font-size: 3rem !important; /* Números del contador más grandes */
+}
+.contador-grid p {
+  font-size: 1.2rem !important;
+}
+
+/* 3. Aumentar textos de la galería */
+.gallery-caption {
+  font-size: 1.6rem !important;
+}
+.message-final h2 {
+  font-size: 3rem !important;
+}
+.message-final p {
+  font-size: 1.4rem !important;
+}
+
+/* 4. Ajuste para Móviles (Para que no se salga de la pantalla al agrandar) */
+@media (max-width: 768px) {
+  .welcome-text h1 { font-size: 15vw !important; } /* Un poco menos en celular */
+  .love-message h1 { font-size: 2.2rem !important; }
+  .contador-grid span { font-size: 2.2rem !important; }
+}
