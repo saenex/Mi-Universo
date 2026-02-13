@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="icon" href="./img/Icon.png" type="image/x-icon">
+  <title>Mi Universo ❤️</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+  <link rel="stylesheet" href="utils/style.css">
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+
+  <div class="fixed-background"></div>
+
+  <div id="welcomeScreen" class="welcome-screen">
+    <div class="welcome-text">
+      <h1>July & Miguel</h1> 
+      <p>Para mi futura medica, experta en cirujias de corazón abierto</p>
+      
+      <div id="enterButton" class="gif-button" role="button">
+        <img id="beeGif" src="img/MiniJuly.png" alt="Entrar" />
+      </div>
+      <p class="click-hint">(Toca la mini July)</p>
+    </div>
+  </div>
+
+  <div id="loadingScreen" class="loading-screen" style="display: none;">
+    <img src="img/MiniJuly.gif" alt="Cargando..." class="loading-gif">
+  </div>
+
+  <div id="main-site" class="hidden-site">
+    
+    <section class="section-flowers">
+      <div class="content-wrapper">
+        <div class="love-message">
+          <h1>⏳ Todo este tiempo... contigo <i class="bi bi-hearts"></i></h1>
+          <p>
+            Días, horas, y miles de momentos que se sienten como magia.
+            Cada segundo a tu lado ha sido un pequeño pedazo de eternidad.
+          </p>
+          <p style="margin-top: 10px; font-size: 1.1em; opacity: 0.9;">
+             Desde aquel 13 de marzo...
+          </p>
+        </div>
+      
+        <div class="slider-wrapper">
+          <div class="slider" id="contadorSlider">
+            <div class="contador-box active">
+              <p class="contador-titulo">DESDE QUE NOS CONOCIMOS</p>
+              <div class="contador-grid">
+                <div><span id="totalDias">0</span><p>días</p></div>
+                <div><span id="horas">0</span><p>horas</p></div>
+                <div><span id="minutos">0</span><p>minutos</p></div>
+                <div><span id="segundos">0</span><p>segundos</p></div>
+              </div>
+            </div>
+            <div class="contador-box">
+              <p class="contador-titulo">DESDE QUE NOS CONOCIMOS</p>
+              <div class="contador-grid">
+                <div><span id="anios2">0</span><p>años</p></div>
+                <div><span id="meses2">0</span><p>meses</p></div>
+                <div><span id="diasSolo2">0</span><p>días</p></div>
+                <div><span id="horas2">0</span><p>horas</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator" id="scrollArrow" style="cursor: pointer;">
+        <p>Toca para ver mi universo</p>
+        <i class="bi bi-arrow-down-circle-fill bounce-arrow"></i>
+      </div>
+    </section>
+
+    <section class="section-universe" id="universeSection">
+      <div id="universe-container"></div>
+      
+      <div class="universe-overlay">
+        <p>Sigue bajando para ver más <i class="bi bi-arrow-down"></i></p>
+      </div>
+    </section>
+
+    <section class="section-gallery">
+      
+      <div class="gallery-card">
+        <div class="card-image-container">
+          <img src="img/foto1.jpg" alt="Foto 1" class="gallery-img">
+        </div>
+        <p class="gallery-caption">Donde todo comenzó ✨</p>
+      </div>
+
+      <div class="gallery-card">
+        <div class="card-image-container">
+          <img src="img/foto2.jpg" alt="Foto 2" class="gallery-img">
+        </div>
+        <p class="gallery-caption">Momentos únicos ❤️</p>
+      </div>
+
+      <div class="gallery-card message-final">
+        <h2>Para mi July</h2>
+        <p>
+          Aunque estemos lejos, mi universo gira alrededor de ti.
+          Gracias por ser mi duo, mi amiga y mi persona favorita.
+        </p>
+        <p class="signature">Con cariño, Miguel.</p>
+      </div>
+
+    </section>
+
+  </div>
+
+  <audio id="backgroundMusic" loop>
+    <source src="img/musica/musica.m4a" type="audio/mpeg">
+  </audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="utils/script.js"></script>
+</body>
+</html>
