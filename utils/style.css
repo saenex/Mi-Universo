@@ -8,7 +8,7 @@
   --font-main: "Charm", cursive;
 }
 
-/* --- CORRECCIÓN DEFINITIVA DE BARRA (Reset Completo) --- */
+/* --- CORRECCIÓN DEFINITIVA DE BARRA (Pegada a la derecha) --- */
 html {
   width: 100%;
   height: 100%;
@@ -68,7 +68,7 @@ body {
   width: 100%;
 }
 .welcome-text h1 { 
-  /* Títulos GIGANTES para que se vean bien en web */
+  /* Títulos GIGANTES para asegurar que se vean bien en web */
   font-size: clamp(80px, 18vw, 150px) !important; 
   margin: 0; font-weight: bold; 
   color: var(--accent-elegant); 
@@ -84,7 +84,7 @@ body {
 .gif-button { 
   margin-top: 2rem; 
   margin-left: auto; margin-right: auto; /* Centrado horizontal */
-  margin-bottom: 10px; 
+  margin-bottom: 5px; /* Poco espacio abajo para pegar el texto */
   width: 150px; height: auto; 
   cursor: pointer; transition: transform 0.3s ease; 
   align-self: center; display: block; 
@@ -92,10 +92,10 @@ body {
 .gif-button:hover { transform: scale(1.05); filter: drop-shadow(0 0 15px var(--accent-elegant)); }
 .gif-button img { width: 100%; height: auto; display: block; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2)); }
 
-/* TEXTO SUTIL "(Toca la mini July)" */
+/* TEXTO SUTIL "(Toca la mini July)" - AHORA MÁS PEQUEÑO */
 .click-hint { 
-  font-size: 1.2rem !important; /* Más pequeño */
-  opacity: 0.7 !important; /* Sutil */
+  font-size: 1rem !important; /* Reducido para ser sutil */
+  opacity: 0.8 !important; 
   font-weight: normal !important;
   margin-top: 0px !important; 
   color: var(--accent-elegant) !important; 
@@ -111,7 +111,7 @@ body {
 
 /* GIF DE CARGA (Agrandado) */
 .loading-gif { 
-  width: 280px !important; /* Mucho más grande */
+  width: 280px !important; /* Grande e imponente */
   height: auto;
   transform: scale(0); opacity: 0; 
 }
@@ -255,7 +255,10 @@ body {
   .love-message h1 { font-size: 2.5rem !important; }
   .contador-grid span { font-size: 2.5rem !important; }
   .floating-video { width: 120px; bottom: 20px; left: 10px; }
+  
   /* Ajuste de carga en móvil para que no se salga */
   .loading-gif { width: 220px !important; }
-  .click-hint { font-size: 1rem !important; }
+  
+  /* Texto sutil pequeño en móvil */
+  .click-hint { font-size: 0.8rem !important; }
 }
