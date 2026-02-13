@@ -3,23 +3,17 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
 // --- CONFIGURACIÓN DE FECHA EXACTA ---
-// 13 de Marzo de 2024 a las 8:38 PM (20:38)
 const fechaInicio = new Date(2024, 2, 13, 20, 38, 0); 
 
 // --- FRASES PERSONALIZADAS ---
 const frasesAmor = [
-    // --- GAMER SUTIL ---
     "Mi Duo favorito", "La mas pro", "Mi MVP", 
     "Mi soporte emocional", "Mi compañera de rank",
     "Mi conexión al alma", "Mi persona favorita", "Mi mejor intención",
-    
-    // --- CHISTES / DINÁMICA DE AMIGOS ---
     "Grosera", "Mi compañera de chisme", "La mas estudiosa", "Futura bilingue",
     "La que me hace bullying", "Te quiero", "La que me trasnocha",
     "Cuidarte como a un girasol", "Mi compañera en Minecraft",
     "La mas dormilona", "Compañera de desvelos", "La mas terca",
-    
-    // --- TIERNO / GENÉRICO ---
     "Mi persona favorita", "Eres increible", "Me encantas", "Ninguna como tú",
     "Gracias por estar", "Mi casualidad bonita", "Te adoro", "Eres unica",
     "Mi 11:11", "Mi notificacion favorita", "Haces mis dias mejores",
@@ -29,7 +23,8 @@ const frasesAmor = [
     "Mi medicina", "Mi refugio", "Eres arte", "Mi felicidad"
 ];
 
-let controls; // Variable global para controlar el zoom/giro
+let controls; 
+let renderer; // Global para poder cambiar estilos dinámicamente
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -58,16 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 bgMusic.play().catch(e => console.log("Audio autoplay prevenido"));
             }
 
-            // Carga simple y rápida
-            setTimeout(() => {
-                loadingGif.classList.remove('active');
-                loadingGif.classList.add('finish');
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    mainSite.classList.add('active'); 
-                    initUniverse(); // Iniciar universo sin esperas complejas
-                }, 500);
-            }, 2000); // Espera 2 segundos para efecto visual
+            // Llamamos a la función que inicia la carga REAL
+            initUniverse(loadingScreen, mainSite, loadingGif);
         });
     }
 
@@ -77,15 +64,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // BOTÓN MÓVIL: BLOQUEAR/DESBLOQUEAR GIRO
+    // --- LÓGICA DEL BOTÓN MÓVIL (CORREGIDA) ---
     if(toggleBtn) {
         toggleBtn.addEventListener('click', () => {
-            if(controls) {
-                controls.enabled = !controls.enabled; // Alternar estado
+            if(controls && renderer) {
+                controls.enabled = !controls.enabled; 
+                
                 if(controls.enabled) {
+                    // ACTIVADO: Bloquea scroll de página, permite mover universo
+                    renderer.domElement.style.touchAction = 'none';
                     toggleBtn.innerHTML = '<i class="bi bi-pause-circle"></i> Desactivar Giro';
                     toggleBtn.classList.add('active');
                 } else {
+                    // DESACTIVADO: Permite scroll de página (pan-y), bloquea universo
+                    renderer.domElement.style.touchAction = 'pan-y';
                     toggleBtn.innerHTML = '<i class="bi bi-hand-index-thumb"></i> Activar Giro';
                     toggleBtn.classList.remove('active');
                 }
@@ -98,13 +90,26 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-//    CONFIGURACIÓN DEL UNIVERSO 3D
+//    CONFIGURACIÓN DEL UNIVERSO 3D (CON CARGA REAL)
 // ==========================================
-function initUniverse() {
+function initUniverse(loadingScreen, mainSite, loadingGif) {
     const container = document.getElementById('universe-container');
     if (!container) return;
 
-    const textureLoader = new THREE.TextureLoader();
+    // --- LOADING MANAGER: Espera a que los planetas carguen ---
+    const manager = new THREE.LoadingManager();
+    
+    manager.onLoad = function () {
+        // Todo cargado
+        loadingGif.classList.remove('active');
+        loadingGif.classList.add('finish');
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+            mainSite.classList.add('active'); 
+        }, 500);
+    };
+
+    const textureLoader = new THREE.TextureLoader(manager);
 
     // 1. ESCENA
     const scene = new THREE.Scene();
@@ -115,10 +120,14 @@ function initUniverse() {
     camera.position.set(0, 15, 45); 
 
     // 2. RENDERIZADORES
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.outputColorSpace = THREE.SRGBColorSpace; 
+    
+    // IMPORTANTE: Permitir scroll vertical por defecto (pan-y)
+    renderer.domElement.style.touchAction = 'pan-y'; 
+    
     container.appendChild(renderer.domElement);
 
     const labelRenderer = new CSS2DRenderer();
@@ -128,14 +137,14 @@ function initUniverse() {
     labelRenderer.domElement.style.pointerEvents = 'none';
     container.appendChild(labelRenderer.domElement);
 
-    // 3. CONTROLES (MODIFICADO PARA MÓVIL)
+    // 3. CONTROLES
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.minDistance = 10;
     controls.maxDistance = 100;
     
-    // Por defecto, desactivamos los controles para evitar que atrape el scroll
+    // Por defecto, desactivamos los controles para que el usuario pueda bajar
     controls.enabled = false; 
 
     // 4. ILUMINACIÓN
@@ -242,9 +251,6 @@ function initUniverse() {
     });
 }
 
-// ==========================================
-//    CONTADORES
-// ==========================================
 function initCounters() {
     function actualizar() {
         const ahora = new Date();
