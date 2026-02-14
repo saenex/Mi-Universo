@@ -24,7 +24,7 @@ const frasesAmor = [
 ];
 
 let controls; 
-let renderer; // Global para poder cambiar estilos dinámicamente
+let renderer; 
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 bgMusic.play().catch(e => console.log("Audio autoplay prevenido"));
             }
 
-            // Llamamos a la función que inicia la carga REAL
             initUniverse(loadingScreen, mainSite, loadingGif);
         });
     }
@@ -64,19 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DEL BOTÓN MÓVIL (CORREGIDA) ---
+    // --- LÓGICA DEL BOTÓN MÓVIL ---
     if(toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             if(controls && renderer) {
                 controls.enabled = !controls.enabled; 
                 
                 if(controls.enabled) {
-                    // ACTIVADO: Bloquea scroll de página, permite mover universo
                     renderer.domElement.style.touchAction = 'none';
                     toggleBtn.innerHTML = '<i class="bi bi-pause-circle"></i> Desactivar Giro';
                     toggleBtn.classList.add('active');
                 } else {
-                    // DESACTIVADO: Permite scroll de página (pan-y), bloquea universo
                     renderer.domElement.style.touchAction = 'pan-y';
                     toggleBtn.innerHTML = '<i class="bi bi-hand-index-thumb"></i> Activar Giro';
                     toggleBtn.classList.remove('active');
@@ -87,20 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initCounters();
     initSlider();
+    initGallery(); // <--- NUEVA FUNCIÓN PARA EL CARRUSEL
 });
 
 // ==========================================
-//    CONFIGURACIÓN DEL UNIVERSO 3D (CON CARGA REAL)
+//    CONFIGURACIÓN DEL UNIVERSO 3D
 // ==========================================
 function initUniverse(loadingScreen, mainSite, loadingGif) {
     const container = document.getElementById('universe-container');
     if (!container) return;
 
-    // --- LOADING MANAGER: Espera a que los planetas carguen ---
     const manager = new THREE.LoadingManager();
     
     manager.onLoad = function () {
-        // Todo cargado
         loadingGif.classList.remove('active');
         loadingGif.classList.add('finish');
         setTimeout(() => {
@@ -110,24 +106,17 @@ function initUniverse(loadingScreen, mainSite, loadingGif) {
     };
 
     const textureLoader = new THREE.TextureLoader(manager);
-
-    // 1. ESCENA
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.002);
 
-    // CÁMARA
     const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 15, 45); 
 
-    // 2. RENDERIZADORES
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.outputColorSpace = THREE.SRGBColorSpace; 
-    
-    // IMPORTANTE: Permitir scroll vertical por defecto (pan-y)
     renderer.domElement.style.touchAction = 'pan-y'; 
-    
     container.appendChild(renderer.domElement);
 
     const labelRenderer = new CSS2DRenderer();
@@ -137,23 +126,18 @@ function initUniverse(loadingScreen, mainSite, loadingGif) {
     labelRenderer.domElement.style.pointerEvents = 'none';
     container.appendChild(labelRenderer.domElement);
 
-    // 3. CONTROLES
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.minDistance = 10;
     controls.maxDistance = 100;
-    
-    // Por defecto, desactivamos los controles para que el usuario pueda bajar
     controls.enabled = false; 
 
-    // 4. ILUMINACIÓN
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.5); 
     scene.add(ambientLight);
     const pointLight = new THREE.PointLight(0xffffff, 3, 500);
     scene.add(pointLight);
 
-    // --- EL SOL ---
     const sunGeo = new THREE.SphereGeometry(5, 64, 64);
     const sunTexture = textureLoader.load('img/planetas/sol.jpg'); 
     const sunMat = new THREE.MeshBasicMaterial({ map: sunTexture, color: 0xffdd00 });
@@ -167,7 +151,6 @@ function initUniverse(loadingScreen, mainSite, loadingGif) {
     sunLabel.position.set(0, 0, 0);
     sun.add(sunLabel);
 
-    // --- PLANETAS ---
     const planets = [];
 
     function createPlanet(data) {
@@ -201,7 +184,6 @@ function initUniverse(loadingScreen, mainSite, loadingGif) {
     planets.push(createPlanet({ size: 1.8, distance: 32, speed: 0.003, texturePath: 'img/planetas/marte.jpg' }));
     planets.push(createPlanet({ size: 3.5, distance: 45, speed: 0.002, texturePath: 'img/planetas/jupiter.jpg' }));
 
-    // --- CINTURÓN DE FRASES ---
     const outerRingPivot = new THREE.Object3D();
     scene.add(outerRingPivot);
 
@@ -296,5 +278,41 @@ function initSlider() {
         if(startX - endX > 50 && currentSlide < 1) currentSlide++;
         if(endX - startX > 50 && currentSlide > 0) currentSlide--;
         update();
+    });
+}
+
+// --- NUEVA LÓGICA PARA EL CARRUSEL DE GALERÍA ---
+function initGallery() {
+    const cards = document.querySelectorAll('.gallery-card');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentIndex = 0;
+
+    if (!cards.length || !prevBtn || !nextBtn) return;
+
+    function showCard(index) {
+        cards.forEach((card, i) => {
+            if (i === index) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+
+    nextBtn.addEventListener('click', () => {
+        currentIndex++;
+        if (currentIndex >= cards.length) {
+            currentIndex = 0; // Vuelve al principio
+        }
+        showCard(currentIndex);
+    });
+
+    prevBtn.addEventListener('click', () => {
+        currentIndex--;
+        if (currentIndex < 0) {
+            currentIndex = cards.length - 1; // Va al final
+        }
+        showCard(currentIndex);
     });
 }
