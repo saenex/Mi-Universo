@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 bgMusic.play().catch(e => console.log("Audio autoplay prevenido"));
             }
 
+            // Llamamos a la función que inicia la carga REAL
             initUniverse(loadingScreen, mainSite, loadingGif);
         });
     }
@@ -84,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initCounters();
     initSlider();
-    initGallery(); // <--- NUEVA FUNCIÓN PARA EL CARRUSEL
+    initGallery(); // <--- ¡IMPORTANTE! ESTO FALTABA PARA ACTIVAR EL CARRUSEL
 });
 
 // ==========================================
@@ -281,14 +282,17 @@ function initSlider() {
     });
 }
 
-// --- NUEVA LÓGICA PARA EL CARRUSEL DE GALERÍA ---
+// --- FUNCIÓN DEL CARRUSEL DE GALERÍA (ESTA FALTABA EN TU ARCHIVO) ---
 function initGallery() {
     const cards = document.querySelectorAll('.gallery-card');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     let currentIndex = 0;
 
-    if (!cards.length || !prevBtn || !nextBtn) return;
+    if (!cards.length || !prevBtn || !nextBtn) {
+        console.warn("Elementos de la galería no encontrados");
+        return;
+    }
 
     function showCard(index) {
         cards.forEach((card, i) => {
@@ -300,10 +304,13 @@ function initGallery() {
         });
     }
 
+    // Asegurarse de que al inicio solo se vea la primera
+    showCard(currentIndex);
+
     nextBtn.addEventListener('click', () => {
         currentIndex++;
         if (currentIndex >= cards.length) {
-            currentIndex = 0; // Vuelve al principio
+            currentIndex = 0;
         }
         showCard(currentIndex);
     });
@@ -311,7 +318,7 @@ function initGallery() {
     prevBtn.addEventListener('click', () => {
         currentIndex--;
         if (currentIndex < 0) {
-            currentIndex = cards.length - 1; // Va al final
+            currentIndex = cards.length - 1;
         }
         showCard(currentIndex);
     });
